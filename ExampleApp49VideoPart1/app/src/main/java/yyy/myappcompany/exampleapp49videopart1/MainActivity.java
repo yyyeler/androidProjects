@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     String winner;
     public void putStone(ImageView btn)
     {
+        TextView textView = findViewById(R.id.textView);
         String tag=btn.getTag().toString();
         int y=Character.getNumericValue(tag.charAt(0));
         int x=Character.getNumericValue(tag.charAt(1));
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
                 btn.setBackgroundResource(R.drawable.red);
                 btn.setY(-1000);
                 btn.animate().translationYBy(yCoor+1000).setDuration(200);
+                textView.setText("Turn Yellow");
                 isTurnRed = false;
                 field[y][x] = 1;
             } else {
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
                 btn.setBackgroundResource(R.drawable.yellow);
                 btn.setY(-1000);
                 btn.animate().translationYBy(yCoor+1000).setDuration(200);
+                textView.setText("Turn Red");
                 isTurnRed = true;
                 field[y][x] = 2;
             }
@@ -46,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         else Toast.makeText(this,"That area already filled",Toast.LENGTH_SHORT).show();
 
         Button btnPlay = findViewById(R.id.button);
-        TextView textView = findViewById(R.id.textView);
+
 
         if(checkIsWon())
         {
@@ -133,7 +136,8 @@ public class MainActivity extends AppCompatActivity {
          btn21 = findViewById(R.id.btn21);
          btn22 = findViewById(R.id.btn22);
          playAgain = findViewById(R.id.button);
-
+         TextView textView = findViewById(R.id.textView);
+         textView.setText("Turn Red");
 
         btn00.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,6 +219,7 @@ public class MainActivity extends AppCompatActivity {
                 TextView textView = findViewById(R.id.textView);
                 textView.setText("");
                 setButtonEnabled(true);
+                textView.setText("Turn Red");
 
             }
         });
