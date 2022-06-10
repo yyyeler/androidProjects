@@ -43,6 +43,7 @@
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:text="14+12"
+            android:textColor="#9C9C9C"
             android:textSize="30sp" />
 
         <TextView
