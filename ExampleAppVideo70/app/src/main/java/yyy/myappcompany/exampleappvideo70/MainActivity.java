@@ -3,7 +3,9 @@ package yyy.myappcompany.exampleappvideo70;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.gridlayout.widget.GridLayout;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -19,12 +21,16 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
     Button showBtn;
     Button a,b,c,d;
+    ImageButton soundBtn;
     TextView txt,timeText,questionText,ratioText,resultText;
     LinearLayout tab;
     GridLayout grid;
     Random random = new Random();
     int answer;
     MediaPlayer mediaPlayer;
+    boolean isMute=false;
+    boolean isPlay=true;
+    CountDownTimer cmt;
 
     public void play(View view)
     {
@@ -33,17 +39,59 @@ public class MainActivity extends AppCompatActivity {
         tab = findViewById(R.id.tab);
         grid = findViewById(R.id.grid);
         resultText = findViewById(R.id.result);
+        ratioText = findViewById(R.id.ratioText);
+        soundBtn = findViewById(R.id.soundBtn);
 
+        if(isPlay)
+        {
+            txt.setVisibility(View.INVISIBLE);
+            grid.setVisibility(View.VISIBLE);
+            tab.setVisibility(View.VISIBLE);
+            resultText.setText("");
+            showBtn.setText("QUIT!");
 
-        showBtn.setVisibility(View.INVISIBLE);
-        txt.setVisibility(View.INVISIBLE);
-        grid.setVisibility(View.VISIBLE);
-        tab.setVisibility(View.VISIBLE);
-        resultText.setText("");
+            runTheClock(30);
+            answer = makeQuestion();
+            makeTheChoices(answer);
 
-        runTheClock(30);
-        answer = makeQuestion();
-        makeTheChoices(answer);
+            a.setEnabled(true);
+            b.setEnabled(true);
+            c.setEnabled(true);
+            d.setEnabled(true);
+            ratioText.setText("0/0");
+            soundBtn.setVisibility(View.VISIBLE);
+            isPlay=false;
+        }
+        else
+        {
+
+            showBtn.setText("PLAY!");
+            txt.setVisibility(View.VISIBLE);
+            grid.setVisibility(View.INVISIBLE);
+            tab.setVisibility(View.INVISIBLE);
+            resultText.setText("");
+            soundBtn.setVisibility(View.INVISIBLE);
+            isPlay=true;
+            cmt.cancel();
+        }
+
+    }
+
+    public void arrangeSound(View view)
+    {
+        if(isMute)
+        {
+            soundBtn = findViewById(R.id.soundBtn);
+            soundBtn.setImageResource(R.drawable.speaker);
+            isMute=false;
+        }
+        else
+        {
+
+            soundBtn = findViewById(R.id.soundBtn);
+            soundBtn.setImageResource(R.drawable.mute);
+            isMute=true;
+        }
     }
 
     public void runTheClock(int seconds)
@@ -56,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         d = findViewById(R.id.D);
         showBtn = findViewById(R.id.play);
 
-        new CountDownTimer(seconds*1000,1000)
+        cmt=new CountDownTimer(seconds*1000,1000)
         {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -73,8 +121,12 @@ public class MainActivity extends AppCompatActivity {
                 d.setEnabled(false);
                 showBtn.setText("PLAY AGAIN!");
                 showBtn.setVisibility(View.VISIBLE);
-                mediaPlayer = MediaPlayer.create(getApplicationContext(),R.raw.alarm);
-                mediaPlayer.start();
+                isPlay=true;
+                if(!isMute)
+                {
+                    mediaPlayer = MediaPlayer.create(getApplicationContext(),R.raw.alarm);
+                    mediaPlayer.start();
+                }
             }
             }.start();
     }
@@ -98,15 +150,21 @@ public class MainActivity extends AppCompatActivity {
             trueAns++;
             resultText.setTextColor(Color.GREEN);
             resultText.setText("True!");
-            mediaPlayer = MediaPlayer.create(getApplicationContext(),R.raw.correct);
-            mediaPlayer.start();
+            if(!isMute)
+            {
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.correct);
+                mediaPlayer.start();
+            }
         }
         else
         {
             resultText.setTextColor(Color.RED);
             resultText.setText("Wrong!");
-            mediaPlayer = MediaPlayer.create(getApplicationContext(),R.raw.wrong);
-            mediaPlayer.start();
+            if(!isMute)
+            {
+                mediaPlayer = MediaPlayer.create(getApplicationContext(),R.raw.wrong);
+                mediaPlayer.start();
+            }
         }
 
         ratioText.setText((trueAns+"/"+allAns));
