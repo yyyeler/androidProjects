@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         d = findViewById(R.id.D);
         showBtn = findViewById(R.id.play);
 
-        cmt=new CountDownTimer(seconds*1000,1000)
+        cmt=new CountDownTimer((seconds*1000)+100,1000)
         {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         {
             trueAns++;
             resultText.setTextColor(Color.GREEN);
-            resultText.setText("True!");
+            resultText.setText("Correct!");
             if(!isMute)
             {
                 mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.correct);
