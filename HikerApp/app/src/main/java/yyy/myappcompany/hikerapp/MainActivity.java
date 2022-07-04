@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     LocationManager locationManager;
     LocationListener locationListener;
     Geocoder geocoder;
-    List <Address> addresses,LastKnownaddresses;
+    List <Address> addresses;
 
     @Override
     public void onRequestPermissionsResult(int requestCode,@NonNull String[] permissions,@NonNull int[] grantResults) {
@@ -40,39 +40,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        geocoder = new Geocoder(this, Locale.getDefault());
-
-        latitude = findViewById(R.id.latitude);
-        longitude = findViewById(R.id.longitude);
-        accuracy = findViewById(R.id.accuracy);
-        altitude = findViewById(R.id.altitude);
-        address = findViewById(R.id.address);
-
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
-                double lng = location.getLongitude();
-                double lat = location.getLatitude();
-
-                try {
-                    addresses = geocoder.getFromLocation(lat,lng,1);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                address.setText("Address : "+addresses.get(0).getAddressLine(0));
-                longitude.setText("Longitude : "+String.valueOf(lng));
-                latitude.setText("Latitude : "+String.valueOf(lat));
-                accuracy.setText("Accuracy : "+String.valueOf(location.getAccuracy()));
-                altitude.setText("Altitude : "+String.valueOf(location.getAltitude()));
+                changeLocation(location);
             }
         };
 
@@ -83,32 +60,39 @@ public class MainActivity extends AppCompatActivity {
         else
         {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-        }
-
-        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        double lastKnownLng = lastKnownLocation.getLongitude();
-        double lastKnownLat = lastKnownLocation.getLatitude();
-
-
-        if(lastKnownLocation != null)
-        {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0, locationListener);
-            longitude.setText("Longitude : "+String.valueOf(lastKnownLng));
-            latitude.setText("Latitude : "+String.valueOf(lastKnownLat));
-            accuracy.setText("Accuracy : "+String.valueOf(lastKnownLocation.getAccuracy()));
-            altitude.setText("Altitude : "+String.valueOf(lastKnownLocation.getAltitude()));
-
-            geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-
-            try {
-                LastKnownaddresses = geocoder.getFromLocation(lastKnownLat,lastKnownLng,1);
-            } catch (Exception e) {
-                e.printStackTrace();
+            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if(lastKnownLocation != null)
+            {
+                changeLocation(lastKnownLocation);
             }
+        }
+    }
 
-            address.setText("Address : "+LastKnownaddresses.get(0).getAddressLine(0));
+    public void changeLocation(Location location)
+    {
 
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        double lng = location.getLongitude();
+        double lat = location.getLatitude();
+
+        latitude = findViewById(R.id.latitude);
+        longitude = findViewById(R.id.longitude);
+        accuracy = findViewById(R.id.accuracy);
+        altitude = findViewById(R.id.altitude);
+        address = findViewById(R.id.address);
+
+        try {
+            addresses = geocoder.getFromLocation(lat,lng,1);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
+        address.setText("Address : "+addresses.get(0).getAddressLine(0));
+        longitude.setText("Longitude : "+String.valueOf(lng));
+        latitude.setText("Latitude : "+String.valueOf(lat));
+        accuracy.setText("Accuracy : "+String.valueOf(location.getAccuracy()));
+        altitude.setText("Altitude : "+String.valueOf(location.getAltitude()));
     }
+
 }
